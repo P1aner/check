@@ -1,0 +1,21 @@
+plugins {
+    id("java")
+}
+
+group = "ru.clevertec"
+version = "1.0-SNAPSHOT"
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'ru.clevertec.check.CheckRunner'
+        )
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+}
