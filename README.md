@@ -5,7 +5,7 @@ Application created on Java 21.
 ## Example of use:  
 ```
 java -cp src ./src/main/java/ru/clevertec/check/CheckRunner.java 3-1 2-5 5-1 discountCard=xxxx
-balanceDebitCard=xxxx  
+balanceDebitCard=xxxx pathToFile=./products.csv saveToFile=./result.csv
 ```
 The set of parameters is specified in the format: __id-quantity__   __discountCard__=xxxx
 __balanceDebitCard__=xxxx
@@ -13,8 +13,10 @@ __balanceDebitCard__=xxxx
 - __quantity__ - Quantity of product.    
 - __discountCard__ - DiscountCardId.
 - __balanceDebitCard__ - Balance debit card.
+- __pathToFile__ - Path to file with products.
+- __saveToFile__ - Path to result file.
 
-  After that, the generated check is displayed in the file __result.csv__.  
+  After that, the generated check is displayed in the file.  
 
 >## Example of check:   
 >Date;Time;
