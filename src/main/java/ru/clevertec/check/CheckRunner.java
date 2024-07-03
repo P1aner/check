@@ -1,17 +1,23 @@
 package ru.clevertec.check;
 
 import ru.clevertec.check.controllers.ConsoleController;
+import ru.clevertec.check.exception.CheckRunnerException;
+
+
+import static ru.clevertec.check.config.AppConfig.SAVE_TO_FILE;
 
 import static ru.clevertec.check.config.AppConfig.configApp;
-import static ru.clevertec.check.config.AppConfig.configLogger;
 
 public class CheckRunner {
 
     public static void main(String[] args) {
-        configLogger();
         configApp(args);
 
         ConsoleController consoleController = new ConsoleController();
-        consoleController.create(args);
+        try {
+            consoleController.create(args);
+        } catch (CheckRunnerException e) {
+            CsvUtil.filePrint(SAVE_TO_FILE, String.format("ERROR%n%s", e.getMessage()));
+        }
     }
 }
