@@ -8,12 +8,12 @@ Application created on Java 21.
 ```
 
 ```shell
-java -jar .\build\libs\check-1.0-SNAPSHOT.jar 13-5 9-1 4-30 1-6 discountCard=1111 balanceDebitCard=1120
+java -jar .\build\libs\check-1.0-SNAPSHOT.jar 13-5 9-1 4-30 1-6 discountCard=1111 balanceDebitCard=1120 pathToFile=./products.csv saveToFile=./result.csv
 ```
 ## Example of use with Java 22:
 
 ```shell
-java -cp src ./src/main/java/ru/clevertec/check/CheckRunner.java 3-1 2-5 5-1 discountCard=2131 balanceDebitCard=1112
+java -cp src ./src/main/java/ru/clevertec/check/CheckRunner.java 3-1 2-5 5-1 discountCard=2131 balanceDebitCard=1112 pathToFile=./products.csv saveToFile=./result.csv
 ```
 
 The set of parameters is specified in the format: __id-quantity__   __discountCard__=xxxx
@@ -22,8 +22,10 @@ __balanceDebitCard__=xxxx
 - __quantity__ - Quantity of product.    
 - __discountCard__ - DiscountCardId.
 - __balanceDebitCard__ - Balance debit card.
+- __pathToFile__ - Path to file with products.
+- __saveToFile__ - Path to result file.
 
-  After that, the generated check is displayed in the file __result.csv__.  
+  After that, the generated check is displayed in the file.  
 
 ## Example of check:
 ```text
