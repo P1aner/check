@@ -37,13 +37,22 @@ public class DiscountCardRepositoryImpl implements DiscountCardRepository {
                 .findFirst();
     }
 
+    @Override
+    public Optional<DiscountCard> findByNumber(Integer number) {
+        return discountCardList.stream()
+                .filter(discountCard -> discountCard.getNumber().equals(number))
+                .findFirst();
+    }
+
     private static List<DiscountCard> setUp() {
         List<List<String>> lists = new CSVReader().readFromCSV(PATH_TO_DISCOUNT_CARD_FILE, CSV_DELIMITER);
         List<DiscountCard> discountCards = new ArrayList<>();
         for (int i = 1; i < lists.size(); i++) {
             List<String> list = lists.get(i);
             try {
-                discountCards.add(new DiscountCard(Long.parseLong(list.get(0)), Integer.parseInt(list.get(1)), Short.parseShort(list.get(2))));
+                discountCards.add(new DiscountCard(Long.parseLong(list.get(0)),
+                        Integer.parseInt(list.get(1)),
+                        Short.parseShort(list.get(2))));
             } catch (Exception e) {
                 logger.warning("INTERNAL SERVER ERROR");
                 throw new RuntimeException();

@@ -44,7 +44,10 @@ public class ProductRepositoryImpl implements ProductRepository {
         for (int i = 1; i < lists.size(); i++) {
             List<String> list = lists.get(i);
             try {
-                products.add(new Product(Long.parseLong(list.get(0)), list.get(1), new BigDecimal(list.get(2)), Integer.parseInt(list.get(3)), list.get(4).equals("+")));
+                products.add(new Product(Long.parseLong(list.get(0)),
+                        list.get(1),
+                        new BigDecimal(list.get(2)),
+                        Integer.parseInt(list.get(3)), Boolean.parseBoolean(list.get(4))));
             } catch (Exception e) {
                 logger.warning("INTERNAL SERVER ERROR");
                 throw new RuntimeException();
