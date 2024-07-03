@@ -1,30 +1,29 @@
 package ru.clevertec.check.repository;
 
+import ru.clevertec.check.exception.CheckRunnerException;
 import ru.clevertec.check.model.DiscountCard;
 import ru.clevertec.check.repository.api.DiscountCardRepository;
-import ru.clevertec.check.utils.CSVReader;
+import ru.clevertec.check.utils.CsvUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 import static ru.clevertec.check.config.AppConfig.CSV_DELIMITER;
 import static ru.clevertec.check.config.AppConfig.PATH_TO_DISCOUNT_CARD_FILE;
 
-public class DiscountCardRepositoryImpl implements DiscountCardRepository {
-    private static final Logger logger = Logger.getLogger("ru.clevertec.check.CheckRunner");
+public class DiscountCardRepositoryCSV implements DiscountCardRepository {
 
     private final List<DiscountCard> discountCardList = new ArrayList<>();
 
-    private static DiscountCardRepositoryImpl instance;
+    private static DiscountCardRepositoryCSV instance;
 
-    private DiscountCardRepositoryImpl() {
+    private DiscountCardRepositoryCSV() {
     }
 
-    public static DiscountCardRepositoryImpl getInstance() {
+    public static DiscountCardRepositoryCSV getInstance() {
         if (instance == null) {
-            instance = new DiscountCardRepositoryImpl();
+            instance = new DiscountCardRepositoryCSV();
             instance.discountCardList.addAll(setUp());
         }
         return instance;
@@ -45,19 +44,23 @@ public class DiscountCardRepositoryImpl implements DiscountCardRepository {
     }
 
     private static List<DiscountCard> setUp() {
-        List<List<String>> lists = new CSVReader().readFromCSV(PATH_TO_DISCOUNT_CARD_FILE, CSV_DELIMITER);
+        List<List<String>> lists = CsvUtil.readFromCSV(PATH_TO_DISCOUNT_CARD_FILE, CSV_DELIMITER);
         List<DiscountCard> discountCards = new ArrayList<>();
-        for (int i = 1; i < lists.size(); i++) {
-            List<String> list = lists.get(i);
-            try {
-                discountCards.add(new DiscountCard(Long.parseLong(list.get(0)),
-                        Integer.parseInt(list.get(1)),
-                        Short.parseShort(list.get(2))));
-            } catch (Exception e) {
-                logger.warning("INTERNAL SERVER ERROR");
-                throw new RuntimeException();
+        try {
+            for (int i = 1; i < lists.size(); i++) {
+                List<String> list = lists.get(i);
+                discountCards.add(buildDiscountCard(list));
             }
+        } catch (Exception e) {
+            throw new CheckRunnerException("INTERNAL SERVER ERROR");
         }
         return discountCards;
+    }
+
+    private static DiscountCard buildDiscountCard(List<String> list) {
+        long id = Long.parseLong(list.get(0));
+        int number = Integer.parseInt(list.get(1));
+        short amount = Short.parseShort(list.get(2));
+        return new DiscountCard(id, number, amount);
     }
 }

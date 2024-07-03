@@ -7,9 +7,9 @@ public class Product {
     private String description;
     private BigDecimal price;
     private Integer quantityInStock;
-    private Boolean wholesaleProduct;
+    private boolean wholesaleProduct;
 
-    public Product(Long id, String description, BigDecimal price, Integer quantityInStock, Boolean wholesaleProduct) {
+    public Product(Long id, String description, BigDecimal price, Integer quantityInStock, boolean wholesaleProduct) {
         this.id = id;
         this.description = description;
         this.price = price;
@@ -49,11 +49,12 @@ public class Product {
         this.quantityInStock = quantityInStock;
     }
 
-    public Boolean getWholesaleProduct() {
-        return wholesaleProduct;
-    }
 
     public void setWholesaleProduct(Boolean wholesaleProduct) {
         this.wholesaleProduct = wholesaleProduct;
+    }
+
+    public boolean isWholesaleProduct() {
+        return wholesaleProduct;
     }
 }
