@@ -33,7 +33,7 @@ public class OrderServiceImpl implements OrderService {
                                 throw new RuntimeException();
                             });
         }
-        DiscountCard discountCard = discountCardRepository.findById(Long.parseLong(discountCardId)).stream()
+        DiscountCard discountCard = discountCardRepository.findByNumber(Integer.parseInt(discountCardId)).stream()
                 .findFirst()
                 .orElse(null);
         return new Order(orderItems, discountCard);
