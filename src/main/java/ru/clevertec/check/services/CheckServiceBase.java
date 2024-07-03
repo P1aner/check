@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static ru.clevertec.check.config.AppConfig.CSV_DELIMITER;
-import static ru.clevertec.check.config.AppConfig.SAVE_TO_FILE;
+import static ru.clevertec.check.config.AppConfig.saveToFile;
 import static ru.clevertec.check.config.DefaultMessages.DATE;
 import static ru.clevertec.check.config.DefaultMessages.DESCRIPTION;
 import static ru.clevertec.check.config.DefaultMessages.DISCOUNT;
@@ -48,7 +48,7 @@ public class CheckServiceBase implements CheckService {
     @Override
     public void printCheck(Order order, BigDecimal money) {
         if (orderService.isEnoughMoney(order, money)) {
-            CsvUtil.filePrint(SAVE_TO_FILE, getCheck(order));
+            CsvUtil.filePrint(saveToFile, getCheck(order));
         }
     }
 

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static ru.clevertec.check.config.AppConfig.CSV_DELIMITER;
-import static ru.clevertec.check.config.AppConfig.PATH_TO_PRODUCT_FILE;
+import static ru.clevertec.check.config.AppConfig.pathToProductFile;
 
 public class ProductRepositoryCSV implements ProductRepository {
 
@@ -38,7 +38,7 @@ public class ProductRepositoryCSV implements ProductRepository {
     }
 
     private static List<Product> setUp() {
-        List<List<String>> lists = CsvUtil.readFromCSV(PATH_TO_PRODUCT_FILE, CSV_DELIMITER);
+        List<List<String>> lists = CsvUtil.readFromCSV(pathToProductFile, CSV_DELIMITER);
         List<Product> products = new ArrayList<>();
         try {
             for (int i = 1; i < lists.size(); i++) {

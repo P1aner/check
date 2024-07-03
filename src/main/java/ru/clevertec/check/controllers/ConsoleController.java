@@ -12,13 +12,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
+
 public class ConsoleController {
-    private static final String NUMBER_REGEX = "-?\\d+(\\.\\d+)?";
-    private static final String DISCOUNT_CARD = "discountCard";
-    private static final String ZERO_STRING = "0";
-    private static final String BALANCE_DEBIT_CARD = "balanceDebitCard";
-    private static final String REGEX_PAIR = "=";
-    private static final String REGEX_DASH = "-";
+    public static final String NUMBER_REGEX = "-?\\d+(\\.\\d+)?";
+    public static final String DISCOUNT_CARD = "discountCard";
+    public static final String ZERO_STRING = "0";
+    public static final String BALANCE_DEBIT_CARD = "balanceDebitCard";
+    public static final String REGEX_PAIR = "=";
+    public static final String REGEX_DASH = "-";
 
     private final OrderService orderService = new OrderServiceBase();
     private final CheckService checkService = new CheckServiceBase();

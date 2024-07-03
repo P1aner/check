@@ -1,37 +1,37 @@
 package ru.clevertec.check.config;
 
+import ru.clevertec.check.exception.CheckRunnerException;
+
+import java.math.BigDecimal;
 import java.util.Arrays;
 
+import static ru.clevertec.check.controllers.ConsoleController.REGEX_PAIR;
 
 public class AppConfig {
     private AppConfig() {
     }
 
-    public static String PATH_TO_PRODUCT_FILE = "./src/main/resources/products.csv";
+    public static String pathToProductFile = "./src/main/resources/products.csv";
+    public static String saveToFile = "./result.csv";
+    public static final String PATH_TO_FILE = "pathToFile";
+    public static final String SAVE_TO_FILE = "saveToFile";
     public static final String PATH_TO_DISCOUNT_CARD_FILE = "./src/main/resources/discountCards.csv";
-    public static String SAVE_TO_FILE = "./result.csv";
     public static final String CSV_DELIMITER = ";";
-    public static final Short WHOLESALE_PERCENT = 10;
+    public static final BigDecimal WHOLESALE_PERCENT = BigDecimal.valueOf(10);
     public static final Short WHOLESALE_COUNT = 5;
 
     public static void configApp(String[] args) {
-        SAVE_TO_FILE = Arrays.stream(args).map(s -> s.split("="))
+        saveToFile = Arrays.stream(args).map(s -> s.split(REGEX_PAIR))
                 .filter(strings -> strings.length == 2)
-                .filter(strings -> strings[0].equals("saveToFile"))
+                .filter(strings -> strings[0].equals(SAVE_TO_FILE))
                 .map(strings -> strings[1])
                 .findFirst()
-                .orElseThrow(() -> {
-                    throw new RuntimeException("BAD REQUEST");
-                });
-        PATH_TO_PRODUCT_FILE = Arrays.stream(args).map(s -> s.split("="))
+                .orElseThrow(() -> new CheckRunnerException("BAD REQUEST"));
+        pathToProductFile = Arrays.stream(args).map(s -> s.split(REGEX_PAIR))
                 .filter(strings -> strings.length == 2)
-                .filter(strings -> strings[0].equals("pathToFile"))
+                .filter(strings -> strings[0].equals(PATH_TO_FILE))
                 .map(strings -> strings[1])
                 .findFirst()
-                .orElseThrow(() -> {
-                   throw  new RuntimeException("BAD REQUEST");
-                });
+                .orElseThrow(() -> new CheckRunnerException("BAD REQUEST"));
     }
-
-
 }
