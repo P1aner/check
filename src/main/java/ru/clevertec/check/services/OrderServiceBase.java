@@ -4,8 +4,8 @@ import ru.clevertec.check.exception.CheckRunnerException;
 import ru.clevertec.check.model.DiscountCard;
 import ru.clevertec.check.model.Order;
 import ru.clevertec.check.model.OrderItem;
-import ru.clevertec.check.repository.DiscountCardRepositoryCSV;
-import ru.clevertec.check.repository.ProductRepositoryCSV;
+import ru.clevertec.check.repository.DiscountCardRepositorySQL;
+import ru.clevertec.check.repository.ProductRepositorySQL;
 import ru.clevertec.check.repository.api.DiscountCardRepository;
 import ru.clevertec.check.repository.api.ProductRepository;
 import ru.clevertec.check.services.api.OrderItemService;
@@ -18,8 +18,8 @@ import java.util.List;
 
 public class OrderServiceBase implements OrderService {
     private final OrderItemService orderItemService = new OrderItemServiceBase();
-    private final ProductRepository productRepository = ProductRepositoryCSV.getInstance();
-    private final DiscountCardRepository discountCardRepository = DiscountCardRepositoryCSV.getInstance();
+    private final ProductRepository productRepository = new ProductRepositorySQL();
+    private final DiscountCardRepository discountCardRepository = new DiscountCardRepositorySQL();
 
     @Override
     public Order createOrder(List<String[]> productsArgs, String discountCardId) {
