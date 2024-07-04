@@ -1,53 +1,65 @@
 package ru.clevertec.check.controllers;
 
+import ru.clevertec.check.exception.CheckRunnerException;
 import ru.clevertec.check.model.Order;
-import ru.clevertec.check.services.CheckServiceImpl;
-import ru.clevertec.check.services.OrderServiceImpl;
+import ru.clevertec.check.services.CheckServiceBase;
+import ru.clevertec.check.services.OrderServiceBase;
+import ru.clevertec.check.services.api.CheckService;
+import ru.clevertec.check.services.api.OrderService;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-import java.util.logging.Logger;
+import java.util.function.Predicate;
 
-import static ru.clevertec.check.utils.NumberCheck.isNumber;
 
 public class ConsoleController {
-    private static final Logger logger = Logger.getLogger("ru.clevertec.check.CheckRunner");
+    public static final String NUMBER_REGEX = "-?\\d+(\\.\\d+)?";
+    public static final String DISCOUNT_CARD = "discountCard";
+    public static final String ZERO_STRING = "0";
+    public static final String BALANCE_DEBIT_CARD = "balanceDebitCard";
+    public static final String REGEX_PAIR = "=";
+    public static final String REGEX_DASH = "-";
 
-    private final OrderServiceImpl orderServiceImpl = new OrderServiceImpl();
-    private final CheckServiceImpl checkServiceImpl = new CheckServiceImpl();
+    private final OrderService orderService = new OrderServiceBase();
+    private final CheckService checkService = new CheckServiceBase();
 
     public void create(String[] args) {
         List<String[]> list = Arrays.stream(args)
-                .map(string -> string.split("="))
+                .map(string -> string.split(REGEX_PAIR))
                 .toList();
 
         String discountCardId = list.stream()
                 .filter(strings -> strings.length == 2)
-                .filter(strings -> strings[0].equals("discountCard"))
+                .filter(strings -> DISCOUNT_CARD.equals(strings[0]))
                 .map(strings -> strings[1])
                 .findFirst()
-                .orElse(String.valueOf(0));
+                .orElse(ZERO_STRING);
 
-        Optional<BigDecimal> balanceDebitCard = list.stream()
+        BigDecimal money = list.stream()
                 .filter(strings -> strings.length == 2)
-                .filter(strings -> strings[0].equals("balanceDebitCard"))
+                .filter(strings -> BALANCE_DEBIT_CARD.equals(strings[0]))
                 .map(strings -> new BigDecimal(strings[1]))
-                .findFirst();
+                .findFirst()
+                .orElseThrow(() -> new CheckRunnerException("INTERNAL SERVER ERROR"));
 
         List<String[]> products = Arrays.stream(args)
-                .map(string -> string.split("-"))
+                .map(string -> string.split(REGEX_DASH))
                 .filter(strings -> strings.length == 2)
-                .filter(strings -> isNumber(strings[0]))
+                .filter(productIdIsNumberOrElseThrow())
                 .toList();
-        Order order = orderServiceImpl.createOrder(products, discountCardId);
 
-        BigDecimal money = balanceDebitCard.orElseThrow(() -> {
-            logger.warning("INTERNAL SERVER ERROR");
-            return new RuntimeException();
-        });
+        Order order = orderService.createOrder(products, discountCardId);
 
-        checkServiceImpl.printCheck(order, money);
+        checkService.printCheck(order, money);
+    }
+
+    private static Predicate<String[]> productIdIsNumberOrElseThrow() {
+        return strings -> {
+            if (strings[0].matches(NUMBER_REGEX)) {
+                return true;
+            }
+            throw new CheckRunnerException("INTERNAL SERVER ERROR");
+        };
     }
 }
