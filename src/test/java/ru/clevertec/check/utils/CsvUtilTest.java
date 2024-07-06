@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.clevertec.check.config.AppConfig.CSV_DELIMITER;
+import static ru.clevertec.check.config.Constants.CSV_DELIMITER;
 
 class CsvUtilTest {
 

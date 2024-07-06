@@ -2,6 +2,8 @@ package ru.clevertec.check.services;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import ru.clevertec.check.exception.CheckRunnerException;
 import ru.clevertec.check.model.DiscountCard;
 import ru.clevertec.check.model.Order;
@@ -12,45 +14,38 @@ import ru.clevertec.check.services.api.OrderService;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static ru.clevertec.check.config.AppConfig.WHOLESALE_COUNT;
+import static ru.clevertec.check.config.Constants.WHOLESALE_COUNT;
 
 class OrderServiceBaseTest {
+    private final OrderService orderService = new OrderServiceBase();
 
     @Test
     void calculateOrderTotalPrice() {
         Order order = getOrder(WHOLESALE_COUNT + 1);
-        OrderService orderService = new OrderServiceBase();
         BigDecimal bigDecimal = orderService.calculateOrderTotalPrice(order);
         Assertions.assertEquals(0, bigDecimal.compareTo(BigDecimal.valueOf(13.80)));
     }
 
-    @Test
-    void calculateOrderTotalDiscountWithWholesale() {
-        Order order = getOrder(WHOLESALE_COUNT + 1);
-        OrderService orderService = new OrderServiceBase();
+    @ParameterizedTest
+    @CsvSource(value = {
+            "1, 1.38",
+            "-1, 0.19",
+    })
+    void calculateOrderTotalDiscountWithWholesale(Integer shift, BigDecimal price) {
+        Order order = getOrder(WHOLESALE_COUNT + shift);
         BigDecimal bigDecimal = orderService.calculateOrderTotalDiscount(order);
-        Assertions.assertEquals(0, bigDecimal.compareTo(BigDecimal.valueOf(1.38)));
-    }
-
-    @Test
-    void calculateOrderTotalDiscountWithoutWholesale() {
-        Order order = getOrder(WHOLESALE_COUNT - 1);
-        OrderService orderService = new OrderServiceBase();
-        BigDecimal bigDecimal = orderService.calculateOrderTotalDiscount(order);
-        Assertions.assertEquals(0, bigDecimal.compareTo(BigDecimal.valueOf(0.19)));
+        Assertions.assertEquals(0, bigDecimal.compareTo(price));
     }
 
     @Test
     void calculateOrderTotalWithDiscount() {
         Order order = getOrder(WHOLESALE_COUNT - 1);
-        OrderService orderService = new OrderServiceBase();
         BigDecimal bigDecimal = orderService.calculateOrderTotalWithDiscount(order);
         Assertions.assertEquals(0, bigDecimal.compareTo(BigDecimal.valueOf(9.01)));
     }
 
     @Test
     void isEnoughMoneyTrue() {
-        OrderService orderService = new OrderServiceBase();
         Order order = getOrder(WHOLESALE_COUNT);
         boolean enoughMoney = orderService.isEnoughMoney(order, BigDecimal.valueOf(10.36));
         System.out.println(orderService.calculateOrderTotalWithDiscount(order));
@@ -59,7 +54,6 @@ class OrderServiceBaseTest {
 
     @Test
     void isEnoughMoneyFalse() {
-        OrderService orderService = new OrderServiceBase();
         Order order = getOrder(WHOLESALE_COUNT);
         CheckRunnerException thrown = Assertions.assertThrows(CheckRunnerException.class, () -> {
             orderService.isEnoughMoney(order, BigDecimal.valueOf(10.34));

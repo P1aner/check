@@ -13,8 +13,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.clevertec.check.config.AppProperties.CSV_DELIMITER;
 import static ru.clevertec.check.config.AppProperties.saveToFile;
+import static ru.clevertec.check.config.Constants.CSV_DELIMITER;
 import static ru.clevertec.check.config.DefaultMessages.DATE;
 import static ru.clevertec.check.config.DefaultMessages.DESCRIPTION;
 import static ru.clevertec.check.config.DefaultMessages.DISCOUNT;

@@ -10,8 +10,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Optional;
 
-import static ru.clevertec.check.config.AppProperties.WHOLESALE_COUNT;
-import static ru.clevertec.check.config.AppProperties.WHOLESALE_PERCENT;
+import static ru.clevertec.check.config.Constants.WHOLESALE_COUNT;
+import static ru.clevertec.check.config.Constants.WHOLESALE_PERCENT;
 
 public class OrderItemServiceBase implements OrderItemService {
 

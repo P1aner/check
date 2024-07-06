@@ -6,9 +6,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import static ru.clevertec.check.config.AppConfig.datasourcePassword;
-import static ru.clevertec.check.config.AppConfig.datasourceUrl;
-import static ru.clevertec.check.config.AppConfig.datasourceUsername;
+import static ru.clevertec.check.config.AppProperties.datasourcePassword;
+import static ru.clevertec.check.config.AppProperties.datasourceUrl;
+import static ru.clevertec.check.config.AppProperties.datasourceUsername;
+
 
 public class JDBCConnector {
     private JDBCConnector() {
