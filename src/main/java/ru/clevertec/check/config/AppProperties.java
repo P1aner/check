@@ -7,20 +7,21 @@ import java.util.Arrays;
 
 import static ru.clevertec.check.controllers.ConsoleController.REGEX_PAIR;
 
-public class AppConfig {
+public class AppProperties {
 
     public static final String DATASOURCE_USERNAME = "datasource.username";
     public static final String DATASOURCE_PASSWORD = "datasource.password";
     public static final String DATASOURCE_URL = "datasource.url";
 
-    private AppConfig() {
+    private AppProperties() {
     }
 
-    public static final String SAVE_TO_FILE = "saveToFile";
-    public static final String CSV_DELIMITER = ";";
     public static String pathToProductFile = "./src/main/resources/products.csv";
     public static String saveToFile = "./result.csv";
+    public static final String PATH_TO_FILE = "pathToFile";
+    public static final String SAVE_TO_FILE = "saveToFile";
     public static final String PATH_TO_DISCOUNT_CARD_FILE = "./src/main/resources/discountCards.csv";
+    public static final String CSV_DELIMITER = ";";
     public static final BigDecimal WHOLESALE_PERCENT = BigDecimal.valueOf(10);
     public static final Short WHOLESALE_COUNT = 5;
     public static String datasourceUsername;

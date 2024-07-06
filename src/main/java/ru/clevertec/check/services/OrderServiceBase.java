@@ -13,8 +13,8 @@ import ru.clevertec.check.services.api.OrderService;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class OrderServiceBase implements OrderService {
     private final OrderItemService orderItemService = new OrderItemServiceBase();
@@ -22,17 +22,15 @@ public class OrderServiceBase implements OrderService {
     private final DiscountCardRepository discountCardRepository = new DiscountCardRepositorySQL();
 
     @Override
-    public Order createOrder(List<String[]> productsArgs, String discountCardId) {
+    public Order createOrder(Map<Long, Integer> productsArgs, String discountCardId) {
         int discountCardIdInt = Integer.parseInt(discountCardId);
-        List<OrderItem> orderItems = new ArrayList<>();
-        for (String[] strings : productsArgs) {
-            long id = Long.parseLong(strings[0]);
-            productRepository.findById(id)
-                    .ifPresentOrElse(product -> orderItems.add(new OrderItem(product, Integer.parseInt(strings[1]))),
-                            () -> {
-                                throw new CheckRunnerException("BAD REQUEST");
-                            });
-        }
+        List<OrderItem> orderItems = productsArgs.entrySet().stream()
+                .map(s -> {
+                    return productRepository.findById(s.getKey())
+                            .map(product -> new OrderItem(product, s.getValue()))
+                            .orElseThrow(() -> new CheckRunnerException("BAD REQUEST"));
+                })
+                .toList();
         DiscountCard discountCard = discountCardRepository.findByNumber(discountCardIdInt)
                 .stream()
                 .findFirst()
