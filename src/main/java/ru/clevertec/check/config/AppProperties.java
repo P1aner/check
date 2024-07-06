@@ -7,8 +7,8 @@ import java.util.Arrays;
 
 import static ru.clevertec.check.controllers.ConsoleController.REGEX_PAIR;
 
-public class AppConfig {
-    private AppConfig() {
+public class AppProperties {
+    private AppProperties() {
     }
 
     public static String pathToProductFile = "./src/main/resources/products.csv";

@@ -9,21 +9,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static ru.clevertec.check.config.AppConfig.CSV_DELIMITER;
-import static ru.clevertec.check.config.AppConfig.PATH_TO_DISCOUNT_CARD_FILE;
+import static ru.clevertec.check.config.AppProperties.CSV_DELIMITER;
+import static ru.clevertec.check.config.AppProperties.PATH_TO_DISCOUNT_CARD_FILE;
 
-public class DiscountCardRepositoryCSV implements DiscountCardRepository {
+public class DiscountCardRepositoryCsV implements DiscountCardRepository {
 
     private final List<DiscountCard> discountCardList = new ArrayList<>();
 
-    private static DiscountCardRepositoryCSV instance;
+    private static DiscountCardRepositoryCsV instance;
 
-    private DiscountCardRepositoryCSV() {
+    private DiscountCardRepositoryCsV() {
     }
 
-    public static DiscountCardRepositoryCSV getInstance() {
+    public static DiscountCardRepositoryCsV getInstance() {
         if (instance == null) {
-            instance = new DiscountCardRepositoryCSV();
+            instance = new DiscountCardRepositoryCsV();
             instance.discountCardList.addAll(setUp());
         }
         return instance;
