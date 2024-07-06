@@ -13,7 +13,7 @@ import java.util.Optional;
 
 import static ru.clevertec.check.utils.MapperFromResultSet.discountCardMapper;
 
-public class DiscountCardRepositorySQL implements DiscountCardRepository {
+public class DiscountCardRepositorySqL implements DiscountCardRepository {
     public static final String SELECT_FROM_DISCOUNT_CARD_WHERE_NUMBER = "SELECT * FROM discount_card WHERE number = ?";
     public static final String SELECT_FROM_DISCOUNT_CARD_WHERE_ID = "SELECT * FROM discount_card WHERE id = ?";
     private final JDBCConnector connector = JDBCConnector.getInstance();
@@ -48,7 +48,6 @@ public class DiscountCardRepositorySQL implements DiscountCardRepository {
         } catch (SQLException e) {
             throw new CheckRunnerException("INTERNAL SERVER ERROR");
         }
-
         return Optional.ofNullable(discountCard);
     }
 }

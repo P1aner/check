@@ -3,10 +3,10 @@ package ru.clevertec.check.services.api;
 import ru.clevertec.check.model.Order;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Map;
 
 public interface OrderService {
-    Order createOrder(List<String[]> productsArgs, String discountCardId);
+    Order createOrder(Map<Long, Integer> productsArgs, String discountCardId);
 
     BigDecimal calculateOrderTotalPrice(Order order);
 
