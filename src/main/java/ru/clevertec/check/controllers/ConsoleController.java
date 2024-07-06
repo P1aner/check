@@ -10,7 +10,9 @@ import ru.clevertec.check.services.api.OrderService;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class ConsoleController {
     private static final String NUMBER_REGEX = "-?\\d+(\\.\\d+)?";
@@ -42,20 +44,22 @@ public class ConsoleController {
                 .findFirst()
                 .orElseThrow(() -> new CheckRunnerException("INTERNAL SERVER ERROR"));
 
-        List<String[]> products = Arrays.stream(args)
+        Map<Long, Integer> collect = Arrays.stream(args)
                 .map(string -> string.split(REGEX_DASH))
                 .filter(strings -> strings.length == 2)
                 .filter(productIdIsNumberOrElseThrow())
-                .toList();
-
-        Order order = orderService.createOrder(products, discountCardId);
+                .collect(Collectors.groupingBy(str -> Long.parseLong(str[0]), Collectors.summingInt(s -> Integer.parseInt(s[1]))));
+        if (collect.isEmpty()) {
+            throw new CheckRunnerException("INTERNAL SERVER ERROR");
+        }
+        Order order = orderService.createOrder(collect, discountCardId);
 
         checkService.printCheck(order, money);
     }
 
     private static Predicate<String[]> productIdIsNumberOrElseThrow() {
         return strings -> {
-            if (strings[0].matches(NUMBER_REGEX)) {
+            if (strings[0].matches(NUMBER_REGEX) && strings[1].matches(NUMBER_REGEX)) {
                 return true;
             }
             throw new CheckRunnerException("INTERNAL SERVER ERROR");

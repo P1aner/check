@@ -2,8 +2,8 @@ package ru.clevertec.check.config;
 
 import java.math.BigDecimal;
 
-public class AppConfig {
-    private AppConfig() {
+public class AppProperties {
+    private AppProperties() {
     }
 
     public static final String PATH_TO_PRODUCT_FILE = "./src/main/resources/products.csv";

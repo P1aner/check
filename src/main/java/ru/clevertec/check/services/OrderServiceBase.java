@@ -4,8 +4,8 @@ import ru.clevertec.check.exception.CheckRunnerException;
 import ru.clevertec.check.model.DiscountCard;
 import ru.clevertec.check.model.Order;
 import ru.clevertec.check.model.OrderItem;
-import ru.clevertec.check.repository.DiscountCardRepositoryCSV;
-import ru.clevertec.check.repository.ProductRepositoryCSV;
+import ru.clevertec.check.repository.DiscountCardRepositoryCsV;
+import ru.clevertec.check.repository.ProductRepositoryCsV;
 import ru.clevertec.check.repository.api.DiscountCardRepository;
 import ru.clevertec.check.repository.api.ProductRepository;
 import ru.clevertec.check.services.api.OrderItemService;
@@ -13,26 +13,24 @@ import ru.clevertec.check.services.api.OrderService;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class OrderServiceBase implements OrderService {
     private final OrderItemService orderItemService = new OrderItemServiceBase();
-    private final ProductRepository productRepository = ProductRepositoryCSV.getInstance();
-    private final DiscountCardRepository discountCardRepository = DiscountCardRepositoryCSV.getInstance();
+    private final ProductRepository productRepository = ProductRepositoryCsV.getInstance();
+    private final DiscountCardRepository discountCardRepository = DiscountCardRepositoryCsV.getInstance();
 
     @Override
-    public Order createOrder(List<String[]> productsArgs, String discountCardId) {
+    public Order createOrder(Map<Long, Integer> productsArgs, String discountCardId) {
         int discountCardIdInt = Integer.parseInt(discountCardId);
-        List<OrderItem> orderItems = new ArrayList<>();
-        for (String[] strings : productsArgs) {
-            long id = Long.parseLong(strings[0]);
-            productRepository.findById(id)
-                    .ifPresentOrElse(product -> orderItems.add(new OrderItem(product, Integer.parseInt(strings[1]))),
-                            () -> {
-                                throw new CheckRunnerException("BAD REQUEST");
-                            });
-        }
+        List<OrderItem> orderItems = productsArgs.entrySet().stream()
+                .map(s -> {
+                    return productRepository.findById(s.getKey())
+                            .map(product -> new OrderItem(product, s.getValue()))
+                            .orElseThrow(() -> new CheckRunnerException("BAD REQUEST"));
+                })
+                .toList();
         DiscountCard discountCard = discountCardRepository.findByNumber(discountCardIdInt)
                 .stream()
                 .findFirst()

@@ -4,7 +4,7 @@ import ru.clevertec.check.controllers.ConsoleController;
 import ru.clevertec.check.exception.CheckRunnerException;
 import ru.clevertec.check.utils.CsvUtil;
 
-import static ru.clevertec.check.config.AppConfig.SAVE_TO_FILE;
+import static ru.clevertec.check.config.AppProperties.SAVE_TO_FILE;
 
 public class CheckRunner {
 

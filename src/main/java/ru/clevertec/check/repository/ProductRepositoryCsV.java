@@ -10,21 +10,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static ru.clevertec.check.config.AppConfig.CSV_DELIMITER;
-import static ru.clevertec.check.config.AppConfig.PATH_TO_PRODUCT_FILE;
+import static ru.clevertec.check.config.AppProperties.CSV_DELIMITER;
+import static ru.clevertec.check.config.AppProperties.PATH_TO_PRODUCT_FILE;
 
-public class ProductRepositoryCSV implements ProductRepository {
+public class ProductRepositoryCsV implements ProductRepository {
 
     private final List<Product> productList = new ArrayList<>();
 
-    private static ProductRepositoryCSV instance;
+    private static ProductRepositoryCsV instance;
 
-    private ProductRepositoryCSV() {
+    private ProductRepositoryCsV() {
     }
 
-    public static ProductRepositoryCSV getInstance() {
+    public static ProductRepositoryCsV getInstance() {
         if (instance == null) {
-            instance = new ProductRepositoryCSV();
+            instance = new ProductRepositoryCsV();
             instance.productList.addAll(setUp());
         }
         return instance;
