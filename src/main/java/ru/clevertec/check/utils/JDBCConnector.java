@@ -33,10 +33,8 @@ public class JDBCConnector {
                 connect();
             }
             return connection;
-        } catch (SQLException e) {
-            throw new CheckRunnerException("INTERNAL SERVER ERROR");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException | ClassNotFoundException e) {
+            throw CheckRunnerException.internalServerError();
         }
     }
 
@@ -44,7 +42,7 @@ public class JDBCConnector {
         try {
             connection = DriverManager.getConnection(datasourceUrl, datasourceUsername, datasourcePassword);
         } catch (SQLException e) {
-            throw new CheckRunnerException("INTERNAL SERVER ERROR");
+            throw CheckRunnerException.internalServerError();
         }
     }
 }

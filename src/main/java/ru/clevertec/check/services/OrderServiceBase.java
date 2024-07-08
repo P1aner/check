@@ -1,6 +1,8 @@
 package ru.clevertec.check.services;
 
+import ru.clevertec.check.exception.BadRequestException;
 import ru.clevertec.check.exception.CheckRunnerException;
+import ru.clevertec.check.exception.DebitCardException;
 import ru.clevertec.check.model.DiscountCard;
 import ru.clevertec.check.model.Order;
 import ru.clevertec.check.model.OrderItem;
@@ -31,7 +33,7 @@ public class OrderServiceBase implements OrderService {
                 .collect(Collectors.toMap(Function.identity(), it -> productsArgs.get(it.getId())));
 
         if (countByProduct.size() != productsArgs.size()) {
-            throw new CheckRunnerException("BAD REQUEST");
+            throw new BadRequestException("BAD REQUEST count in order products and count in repo not match");
         }
 
         List<OrderItem> orderItems = new ArrayList<>();
@@ -47,7 +49,7 @@ public class OrderServiceBase implements OrderService {
 
     private static OrderItem buildOrderItem(Product product, Integer count) {
         if (product.getQuantityInStock() < count) {
-            throw new CheckRunnerException("BAD REQUEST");
+            throw new BadRequestException("BAD REQUEST Quantity in stock < count");
         }
         return new OrderItem(product, count);
     }
@@ -80,30 +82,34 @@ public class OrderServiceBase implements OrderService {
         if (money.compareTo(calculateOrderTotalWithDiscount(order)) > 0) {
             return true;
         }
-        throw new CheckRunnerException("NOT ENOUGH MONEY");
+        throw new DebitCardException("NOT ENOUGH MONEY");
     }
 
     @Override
     public void completeOrder(Order order, BigDecimal money) {
         isEnoughMoney(order, money);
-        List<Long> ids = order.getOrderItems().stream()
+        List<Long> productIds = order.getOrderItems().stream()
                 .map(orderItem -> orderItem.getProduct().getId())
                 .toList();
-        List<Product> byIds = productRepository.findByIds(ids);
-        List<Product> products = byIds.stream()
-                .peek(product -> {
-                    Long productId = product.getId();
-                    Integer quantityInStock = product.getQuantityInStock();
-                    OrderItem orderItem1 = order.getOrderItems().stream()
-                            .filter(orderItem -> orderItem.getProduct().getId().equals(productId))
-                            .findFirst()
-                            .orElseThrow();
-                    quantityInStock -= orderItem1.getCount();
-                    product.setQuantityInStock(quantityInStock);
-                })
-                .toList();
-        if (ids.size() == byIds.size() && byIds.size() == products.size()) {
-            productRepository.updateAll(products);
-        } else throw new CheckRunnerException("");
+        List<Product> productsFromRepository = productRepository.findByIds(productIds);
+        List<Product> productsForUpdate = new ArrayList<>();
+        productsFromRepository.forEach(product -> {
+            Integer quantityInStock = product.getQuantityInStock();
+            Integer requestedCount = order.getOrderItems().stream()
+                    .filter(orderItem -> orderItem.getProduct().getId().equals(product.getId()))
+                    .findFirst()
+                    .orElseThrow(CheckRunnerException::internalServerError)
+                    .getCount();
+            quantityInStock -= requestedCount;
+            if (quantityInStock < 0) {
+                throw CheckRunnerException.internalServerError();
+            }
+            product.setQuantityInStock(quantityInStock);
+            productsForUpdate.add(product);
+        });
+        if (productIds.size() != productsFromRepository.size()) {
+            throw new BadRequestException("BAD REQUEST Quantity in stock and count not match");
+        }
+        productRepository.updateAll(productsForUpdate);
     }
 }

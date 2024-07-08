@@ -24,6 +24,7 @@ public class ProductRepositorySqL implements ProductRepository {
     public static final String UPDATE_PRODUCT_SET_DESCRIPTION_PRICE_QUANTITY_IN_STOCK_WHOLESALE_PRODUCT_WHERE_ID = "UPDATE product SET description = ?, price = ?, quantity_in_stock = ?, wholesale_product = ? WHERE id = ?";
     public static final String DELETE_FROM_PRODUCT_WHERE_ID_VALUES = "DELETE FROM product WHERE id = ?";
     public static final String SELECT_FROM_PRODUCT_WHERE_ID_ANY = "SELECT * FROM product WHERE id = any (?)";
+    public static final String SELECT_EXISTS_SELECT_FROM_PRODUCT_WHERE_ID = "SELECT EXISTS (SELECT * FROM product WHERE id = ?)";
     private final JDBCConnector connector = JDBCConnector.getInstance();
 
     @Override
@@ -42,7 +43,7 @@ public class ProductRepositorySqL implements ProductRepository {
                     id = resultSet.getLong(1);
                 }
             } catch (SQLException e) {
-                throw new CheckRunnerException("INTERNAL SERVER ERROR");
+                throw CheckRunnerException.internalServerError();
             }
         } else {
             try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_PRODUCT_SET_DESCRIPTION_PRICE_QUANTITY_IN_STOCK_WHOLESALE_PRODUCT_WHERE_ID)) {
@@ -54,7 +55,7 @@ public class ProductRepositorySqL implements ProductRepository {
                 preparedStatement.executeUpdate();
                 id = product.getId();
             } catch (SQLException e) {
-                throw new CheckRunnerException("INTERNAL SERVER ERROR");
+                throw CheckRunnerException.internalServerError();
             }
         }
         return id;
@@ -71,7 +72,7 @@ public class ProductRepositorySqL implements ProductRepository {
                 product = productMapper(resultSet);
             }
         } catch (SQLException e) {
-            throw new CheckRunnerException("INTERNAL SERVER ERROR");
+            throw CheckRunnerException.internalServerError();
         }
         return Optional.ofNullable(product);
     }
@@ -88,7 +89,7 @@ public class ProductRepositorySqL implements ProductRepository {
                 products.add(productMapper(resultSet));
             }
         } catch (SQLException e) {
-            throw new CheckRunnerException("INTERNAL SERVER ERROR");
+            throw CheckRunnerException.internalServerError();
         }
         return products;
     }
@@ -96,8 +97,7 @@ public class ProductRepositorySqL implements ProductRepository {
     @Override
     public void updateAll(List<Product> products) {
         Connection connection = connector.getConnection();
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_PRODUCT_SET_DESCRIPTION_PRICE_QUANTITY_IN_STOCK_WHOLESALE_PRODUCT_WHERE_ID);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_PRODUCT_SET_DESCRIPTION_PRICE_QUANTITY_IN_STOCK_WHOLESALE_PRODUCT_WHERE_ID)) {
             for (Product product : products) {
                 preparedStatement.setString(1, product.getDescription());
                 preparedStatement.setBigDecimal(2, product.getPrice());
@@ -108,18 +108,31 @@ public class ProductRepositorySqL implements ProductRepository {
             }
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new CheckRunnerException("INTERNAL SERVER ERROR");
+            throw CheckRunnerException.internalServerError();
         }
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(long id) {
         Connection connection = connector.getConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_FROM_PRODUCT_WHERE_ID_VALUES)) {
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new CheckRunnerException("INTERNAL SERVER ERROR");
+            throw CheckRunnerException.internalServerError();
+        }
+    }
+
+    @Override
+    public boolean exists(long id) {
+        Connection connection = connector.getConnection();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_EXISTS_SELECT_FROM_PRODUCT_WHERE_ID)) {
+            preparedStatement.setLong(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            return resultSet.getBoolean(1);
+        } catch (SQLException e) {
+            throw CheckRunnerException.internalServerError();
         }
     }
 }

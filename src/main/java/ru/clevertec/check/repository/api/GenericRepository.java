@@ -7,5 +7,7 @@ public interface GenericRepository<T> {
 
     Optional<T> findById(long id);
 
-    void deleteById(Long id);
+    void deleteById(long id);
+
+    boolean exists(long id);
 }

@@ -20,8 +20,8 @@ public class DiscountCardRepositorySqL implements DiscountCardRepository {
     public static final String INSERT_INTO_PUBLIC_DISCOUNT_CARD_NUMBER_AMOUNT_VALUES = "INSERT INTO discount_card (number, amount) VALUES (?, ?)";
     public static final String UPDATE_PUBLIC_DISCOUNT_CARD_SET_NUMBER_AMOUNT_WHERE_ID = "UPDATE discount_card SET number = ?, amount = ? WHERE id = ?";
     public static final String DELETE_FROM_DISCOUNT_CARD_WHERE_ID_VALUES = "DELETE FROM discount_card WHERE id = ?";
+    public static final String SELECT_EXISTS_SELECT_FROM_DISCOUNT_CARD_WHERE_ID = "SELECT EXISTS (SELECT * FROM discount_card WHERE id = ?)";
     private final JDBCConnector connector = JDBCConnector.getInstance();
-
 
     @Override
     public Long save(DiscountCard discountCard) {
@@ -37,7 +37,7 @@ public class DiscountCardRepositorySqL implements DiscountCardRepository {
                     id = resultSet.getLong(1);
                 }
             } catch (SQLException e) {
-                throw new CheckRunnerException("INTERNAL SERVER ERROR");
+                throw CheckRunnerException.internalServerError();
             }
         } else {
             try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_PUBLIC_DISCOUNT_CARD_SET_NUMBER_AMOUNT_WHERE_ID)) {
@@ -47,7 +47,7 @@ public class DiscountCardRepositorySqL implements DiscountCardRepository {
                 preparedStatement.executeUpdate();
                 id = discountCard.getId();
             } catch (SQLException e) {
-                throw new CheckRunnerException("INTERNAL SERVER ERROR");
+                throw CheckRunnerException.internalServerError();
             }
         }
         return id;
@@ -58,13 +58,13 @@ public class DiscountCardRepositorySqL implements DiscountCardRepository {
         DiscountCard discountCard = null;
         Connection connection = connector.getConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_FROM_DISCOUNT_CARD_WHERE_NUMBER)) {
-            preparedStatement.setLong(1, number);
+            preparedStatement.setInt(1, number);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 discountCard = discountCardMapper(resultSet);
             }
         } catch (SQLException e) {
-            throw new CheckRunnerException("INTERNAL SERVER ERROR");
+            throw CheckRunnerException.internalServerError();
         }
         return Optional.ofNullable(discountCard);
     }
@@ -80,20 +80,32 @@ public class DiscountCardRepositorySqL implements DiscountCardRepository {
                 discountCard = discountCardMapper(resultSet);
             }
         } catch (SQLException e) {
-            throw new CheckRunnerException("INTERNAL SERVER ERROR");
+            throw CheckRunnerException.internalServerError();
         }
-
         return Optional.ofNullable(discountCard);
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(long id) {
         Connection connection = connector.getConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_FROM_DISCOUNT_CARD_WHERE_ID_VALUES)) {
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new CheckRunnerException("INTERNAL SERVER ERROR");
+            throw CheckRunnerException.internalServerError();
+        }
+    }
+
+    @Override
+    public boolean exists(long id) {
+        Connection connection = connector.getConnection();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_EXISTS_SELECT_FROM_DISCOUNT_CARD_WHERE_ID)) {
+            preparedStatement.setLong(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            return resultSet.getBoolean(1);
+        } catch (SQLException e) {
+            throw CheckRunnerException.internalServerError();
         }
     }
 }
