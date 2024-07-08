@@ -8,8 +8,18 @@ import ru.clevertec.check.repository.ProductRepositorySqL;
 import ru.clevertec.check.repository.api.ProductRepository;
 
 public class ProductServiceBase {
-    private final ProductRepository productRepository = new ProductRepositorySqL();
-    private final ProductMapper productMapper = new ProductMapper();
+    private final ProductRepository productRepository;
+    private final ProductMapper productMapper;
+
+    public ProductServiceBase() {
+        productRepository = new ProductRepositorySqL();
+        productMapper = new ProductMapper();
+    }
+
+    public ProductServiceBase(ProductRepository productRepository, ProductMapper productMapper) {
+        this.productRepository = productRepository;
+        this.productMapper = productMapper;
+    }
 
     public void createNewProduct(ProductDTO productDTO) {
         Product product = productMapper.productDTOtoProduct(productDTO);
@@ -29,16 +39,17 @@ public class ProductServiceBase {
             Product product = productMapper.productDTOtoProduct(productDTO);
             product.setId(parsedId);
             productRepository.save(product);
+        } else {
+            throw new ObjectNotFoundException("Product %s not found".formatted(id));
         }
-        throw new ObjectNotFoundException("Product %s not found".formatted(id));
-
     }
 
     public void deleteProduct(String id) {
         long parsedId = Long.parseLong(id);
         if (productRepository.exists(parsedId)) {
             productRepository.deleteById(parsedId);
+        } else {
+            throw new ObjectNotFoundException("Product %s not found".formatted(id));
         }
-        throw new ObjectNotFoundException("Product %s not found".formatted(id));
     }
 }

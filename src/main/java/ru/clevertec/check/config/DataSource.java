@@ -6,8 +6,8 @@ public class DataSource {
     private DataSource() {
     }
 
-    public static String datasourceUrl = System.getProperty("datasource.url");
-    public static String datasourceUsername = System.getProperty("datasource.username");
-    public static String datasourcePassword = System.getProperty("datasource.password");
+    public static final String DATASOURCE_URL = System.getProperty("datasource.url");
+    public static final String DATASOURCE_USERNAME = System.getProperty("datasource.username");
+    public static final String DATASOURCE_PASSWORD = System.getProperty("datasource.password");
 
 }

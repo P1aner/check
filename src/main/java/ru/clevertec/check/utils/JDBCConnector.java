@@ -6,9 +6,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import static ru.clevertec.check.config.DataSource.datasourcePassword;
-import static ru.clevertec.check.config.DataSource.datasourceUrl;
-import static ru.clevertec.check.config.DataSource.datasourceUsername;
+import static ru.clevertec.check.config.DataSource.DATASOURCE_PASSWORD;
+import static ru.clevertec.check.config.DataSource.DATASOURCE_URL;
+import static ru.clevertec.check.config.DataSource.DATASOURCE_USERNAME;
 
 
 public class JDBCConnector {
@@ -40,7 +40,7 @@ public class JDBCConnector {
 
     private void connect() {
         try {
-            connection = DriverManager.getConnection(datasourceUrl, datasourceUsername, datasourcePassword);
+            connection = DriverManager.getConnection(DATASOURCE_URL, DATASOURCE_USERNAME, DATASOURCE_PASSWORD);
         } catch (SQLException e) {
             throw CheckRunnerException.internalServerError();
         }

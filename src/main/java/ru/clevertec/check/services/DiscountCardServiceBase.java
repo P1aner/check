@@ -8,8 +8,19 @@ import ru.clevertec.check.repository.DiscountCardRepositorySqL;
 import ru.clevertec.check.repository.api.DiscountCardRepository;
 
 public class DiscountCardServiceBase {
-    private final DiscountCardRepository discountCardRepository = new DiscountCardRepositorySqL();
-    private final DiscountCardMapper discountCardMapper = new DiscountCardMapper();
+
+    private final DiscountCardRepository discountCardRepository;
+    private final DiscountCardMapper discountCardMapper;
+
+    public DiscountCardServiceBase() {
+        discountCardRepository = new DiscountCardRepositorySqL();
+        discountCardMapper = new DiscountCardMapper();
+    }
+
+    public DiscountCardServiceBase(DiscountCardRepository discountCardRepository, DiscountCardMapper discountCardMapper) {
+        this.discountCardRepository = discountCardRepository;
+        this.discountCardMapper = discountCardMapper;
+    }
 
     public void createNewDiscountCard(DiscountCardDTO discountCardDTO) {
         DiscountCard discountCard = discountCardMapper.discountCardDTOtoDiscountCard(discountCardDTO);
@@ -29,15 +40,17 @@ public class DiscountCardServiceBase {
             DiscountCard discountCard = discountCardMapper.discountCardDTOtoDiscountCard(discountCardDTO);
             discountCard.setId(parsedId);
             discountCardRepository.save(discountCard);
+        } else {
+            throw new ObjectNotFoundException("Discount card %s not found".formatted(id));
         }
-        throw new ObjectNotFoundException("Discount card %s not found".formatted(id));
     }
 
     public void deleteDiscountCard(String id) {
         long parsedId = Long.parseLong(id);
         if (discountCardRepository.exists(parsedId)) {
             discountCardRepository.deleteById(parsedId);
+        } else {
+            throw new ObjectNotFoundException("Discount card %s not found".formatted(id));
         }
-        throw new ObjectNotFoundException("Discount card %s not found".formatted(id));
     }
 }
