@@ -5,6 +5,11 @@ public class DiscountCard {
     private Integer number;
     private Short amount;
 
+    public DiscountCard(Integer number, Short amount) {
+        this.number = number;
+        this.amount = amount;
+    }
+
     public DiscountCard(Long id, Integer number, Short amount) {
         this.id = id;
         this.number = number;

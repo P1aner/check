@@ -9,6 +9,13 @@ public class Product {
     private Integer quantityInStock;
     private boolean wholesaleProduct;
 
+    public Product(String description, BigDecimal price, Integer quantityInStock, boolean wholesaleProduct) {
+        this.description = description;
+        this.price = price;
+        this.quantityInStock = quantityInStock;
+        this.wholesaleProduct = wholesaleProduct;
+    }
+
     public Product(Long id, String description, BigDecimal price, Integer quantityInStock, boolean wholesaleProduct) {
         this.id = id;
         this.description = description;

@@ -82,4 +82,28 @@ public class OrderServiceBase implements OrderService {
         }
         throw new CheckRunnerException("NOT ENOUGH MONEY");
     }
+
+    @Override
+    public void completeOrder(Order order, BigDecimal money) {
+        isEnoughMoney(order, money);
+        List<Long> ids = order.getOrderItems().stream()
+                .map(orderItem -> orderItem.getProduct().getId())
+                .toList();
+        List<Product> byIds = productRepository.findByIds(ids);
+        List<Product> products = byIds.stream()
+                .peek(product -> {
+                    Long productId = product.getId();
+                    Integer quantityInStock = product.getQuantityInStock();
+                    OrderItem orderItem1 = order.getOrderItems().stream()
+                            .filter(orderItem -> orderItem.getProduct().getId().equals(productId))
+                            .findFirst()
+                            .orElseThrow();
+                    quantityInStock -= orderItem1.getCount();
+                    product.setQuantityInStock(quantityInStock);
+                })
+                .toList();
+        if (ids.size() == byIds.size() && byIds.size() == products.size()) {
+            productRepository.updateAll(products);
+        } else throw new CheckRunnerException("");
+    }
 }

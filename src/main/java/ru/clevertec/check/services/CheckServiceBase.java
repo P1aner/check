@@ -6,14 +6,12 @@ import ru.clevertec.check.services.api.OrderItemService;
 import ru.clevertec.check.services.api.OrderService;
 import ru.clevertec.check.utils.CsvUtil;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.clevertec.check.config.AppProperties.saveToFile;
 import static ru.clevertec.check.config.Constants.CSV_DELIMITER;
 import static ru.clevertec.check.config.DefaultMessages.DATE;
 import static ru.clevertec.check.config.DefaultMessages.DESCRIPTION;
@@ -39,17 +37,9 @@ public class CheckServiceBase implements CheckService {
     private final OrderService orderService = new OrderServiceBase();
     private final OrderItemService orderItemService = new OrderItemServiceBase();
 
-
     @Override
     public String getCheck(Order order) {
         return CsvUtil.convertListToCSVString(orderToLists(order), CSV_DELIMITER);
-    }
-
-    @Override
-    public void printCheck(Order order, BigDecimal money) {
-        if (orderService.isEnoughMoney(order, money)) {
-            CsvUtil.filePrint(saveToFile, getCheck(order));
-        }
     }
 
     private List<List<String>> orderToLists(Order order) {

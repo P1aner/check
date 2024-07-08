@@ -7,5 +7,7 @@ import java.util.List;
 
 public interface ProductRepository extends GenericRepository<Product> {
 
+    void updateAll(List<Product> products);
+
     List<Product> findByIds(Collection<Long> productIds);
 }
