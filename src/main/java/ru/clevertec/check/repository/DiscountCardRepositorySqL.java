@@ -16,8 +16,20 @@ import static ru.clevertec.check.utils.MapperFromResultSet.discountCardMapper;
 public class DiscountCardRepositorySqL implements DiscountCardRepository {
     public static final String SELECT_FROM_DISCOUNT_CARD_WHERE_NUMBER = "SELECT * FROM discount_card WHERE number = ?";
     public static final String SELECT_FROM_DISCOUNT_CARD_WHERE_ID = "SELECT * FROM discount_card WHERE id = ?";
-    private final JDBCConnector connector = JDBCConnector.getInstance();
+    private static DiscountCardRepositorySqL instance;
+    private final JDBCConnector connector;
 
+    private DiscountCardRepositorySqL(JDBCConnector connector) {
+        this.connector = connector;
+    }
+
+    public static DiscountCardRepositorySqL getInstance() {
+        if (instance == null) {
+            JDBCConnector connector = JDBCConnector.getInstance();
+            instance = new DiscountCardRepositorySqL(connector);
+        }
+        return instance;
+    }
 
     @Override
     public Optional<DiscountCard> findByNumber(Integer number) {

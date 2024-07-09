@@ -9,6 +9,7 @@ import ru.clevertec.check.model.DiscountCard;
 import ru.clevertec.check.model.Order;
 import ru.clevertec.check.model.OrderItem;
 import ru.clevertec.check.model.Product;
+import ru.clevertec.check.services.api.OrderItemService;
 import ru.clevertec.check.services.api.OrderService;
 
 import java.math.BigDecimal;
@@ -17,7 +18,8 @@ import java.util.List;
 import static ru.clevertec.check.config.Constants.WHOLESALE_COUNT;
 
 class OrderServiceBaseTest {
-    private final OrderService orderService = new OrderServiceBase();
+    private final OrderItemService orderItemService = new OrderItemServiceBase();
+    private final OrderService orderService = new OrderServiceBase(orderItemService, null, null);
 
     @Test
     void calculateOrderTotalPrice() {
