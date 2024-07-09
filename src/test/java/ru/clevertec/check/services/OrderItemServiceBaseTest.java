@@ -17,6 +17,7 @@ import static ru.clevertec.check.config.Constants.WHOLESALE_COUNT;
 
 
 class OrderItemServiceBaseTest {
+    private final OrderItemService orderItemService = new OrderItemServiceBase();
 
     @ParameterizedTest
     @CsvSource(value = {
@@ -25,7 +26,6 @@ class OrderItemServiceBaseTest {
             "2.24, 1.119"
     })
     void calculateOrderItemTotalPrice(BigDecimal expectedOrderItemTotalPrice, BigDecimal productPrice) {
-        OrderItemService orderItemService = new OrderItemServiceBase();
         Product product = new Product(1L, "1", productPrice, 10, true);
         OrderItem orderItem = new OrderItem(product, 2);
         BigDecimal calculatedOrderItemTotalPrice = orderItemService.calculateOrderItemTotalPrice(orderItem);
@@ -42,7 +42,6 @@ class OrderItemServiceBaseTest {
         Product product = new Product(1L, "1", price, 10, true);
         OrderItem orderItem = new OrderItem(product, WHOLESALE_COUNT + shift);
         Order order = new Order(List.of(orderItem), discountCard);
-        OrderItemService orderItemService = new OrderItemServiceBase();
         BigDecimal bigDecimal = orderItemService.calculateOrderItemDiscount(orderItem, order);
         Assertions.assertEquals(0, bigDecimal.compareTo(calculatePrice));
     }

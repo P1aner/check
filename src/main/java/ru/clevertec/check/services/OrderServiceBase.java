@@ -7,8 +7,6 @@ import ru.clevertec.check.model.DiscountCard;
 import ru.clevertec.check.model.Order;
 import ru.clevertec.check.model.OrderItem;
 import ru.clevertec.check.model.Product;
-import ru.clevertec.check.repository.DiscountCardRepositorySqL;
-import ru.clevertec.check.repository.ProductRepositorySqL;
 import ru.clevertec.check.repository.api.DiscountCardRepository;
 import ru.clevertec.check.repository.api.ProductRepository;
 import ru.clevertec.check.services.api.OrderItemService;

@@ -4,29 +4,26 @@ import ru.clevertec.check.dto.DiscountCardDTO;
 import ru.clevertec.check.dto.mapper.DiscountCardMapper;
 import ru.clevertec.check.exception.ObjectNotFoundException;
 import ru.clevertec.check.model.DiscountCard;
-import ru.clevertec.check.repository.DiscountCardRepositorySqL;
 import ru.clevertec.check.repository.api.DiscountCardRepository;
+import ru.clevertec.check.services.api.DiscountCardService;
 
-public class DiscountCardServiceBase {
+public class DiscountCardServiceBase implements DiscountCardService {
 
     private final DiscountCardRepository discountCardRepository;
     private final DiscountCardMapper discountCardMapper;
-
-    public DiscountCardServiceBase() {
-        discountCardRepository = new DiscountCardRepositorySqL();
-        discountCardMapper = new DiscountCardMapper();
-    }
 
     public DiscountCardServiceBase(DiscountCardRepository discountCardRepository, DiscountCardMapper discountCardMapper) {
         this.discountCardRepository = discountCardRepository;
         this.discountCardMapper = discountCardMapper;
     }
 
+    @Override
     public void createNewDiscountCard(DiscountCardDTO discountCardDTO) {
         DiscountCard discountCard = discountCardMapper.discountCardDTOtoDiscountCard(discountCardDTO);
         discountCardRepository.save(discountCard);
     }
 
+    @Override
     public DiscountCardDTO getDiscountCard(String id) {
         long parsedId = Long.parseLong(id);
         DiscountCard discountCard = discountCardRepository.findById(parsedId)
@@ -34,6 +31,7 @@ public class DiscountCardServiceBase {
         return discountCardMapper.discountCardtoDiscountCardDTO(discountCard);
     }
 
+    @Override
     public void updateDiscountCard(String id, DiscountCardDTO discountCardDTO) {
         long parsedId = Long.parseLong(id);
         if (discountCardRepository.exists(parsedId)) {
@@ -45,6 +43,7 @@ public class DiscountCardServiceBase {
         }
     }
 
+    @Override
     public void deleteDiscountCard(String id) {
         long parsedId = Long.parseLong(id);
         if (discountCardRepository.exists(parsedId)) {

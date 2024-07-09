@@ -8,6 +8,7 @@ import ru.clevertec.check.dto.mapper.ProductMapper;
 import ru.clevertec.check.exception.CheckRunnerException;
 import ru.clevertec.check.exception.ObjectNotFoundException;
 import ru.clevertec.check.repository.api.ProductRepository;
+import ru.clevertec.check.services.api.ProductService;
 
 import java.util.Optional;
 
@@ -15,7 +16,7 @@ import static org.postgresql.hostchooser.HostRequirement.any;
 
 class ProductServiceBaseTest {
     private final ProductRepository productRepository = Mockito.mock(ProductRepository.class);
-    private final ProductServiceBase productServiceBase = new ProductServiceBase(productRepository, new ProductMapper());
+    private final ProductService productServiceBase = new ProductServiceBase(productRepository, new ProductMapper());
 
     @Test
     void getProductNegativeCase() {

@@ -8,6 +8,7 @@ import ru.clevertec.check.dto.mapper.DiscountCardMapper;
 import ru.clevertec.check.exception.CheckRunnerException;
 import ru.clevertec.check.exception.ObjectNotFoundException;
 import ru.clevertec.check.repository.api.DiscountCardRepository;
+import ru.clevertec.check.services.api.DiscountCardService;
 
 import java.util.Optional;
 
@@ -15,7 +16,7 @@ import static org.postgresql.hostchooser.HostRequirement.any;
 
 class DiscountCardServiceBaseTest {
     private final DiscountCardRepository discountCardRepository = Mockito.mock(DiscountCardRepository.class);
-    private final DiscountCardServiceBase discountCardService = new DiscountCardServiceBase(discountCardRepository, new DiscountCardMapper());
+    private final DiscountCardService discountCardService = new DiscountCardServiceBase(discountCardRepository, new DiscountCardMapper());
 
     @Test
     void getDiscountCardNegativeCase() {

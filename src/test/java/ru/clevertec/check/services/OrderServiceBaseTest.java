@@ -73,15 +73,6 @@ class OrderServiceBaseTest {
         Assertions.assertEquals("NOT ENOUGH MONEY", thrown.getMessage());
     }
 
-    private static Order getOrder(int WHOLESALE_COUNT) {
-        DiscountCard discountCard = new DiscountCard(1L, 1, (short) 2);
-        Product product1 = new Product(1L, "1", BigDecimal.valueOf(1.1), 10, true);
-        Product product2 = new Product(1L, "1", BigDecimal.valueOf(1.2), 10, true);
-        OrderItem orderItem1 = new OrderItem(product1, WHOLESALE_COUNT);
-        OrderItem orderItem2 = new OrderItem(product2, WHOLESALE_COUNT);
-        return new Order(List.of(orderItem1, orderItem2), discountCard);
-    }
-
     @Test
     void createOrderNegativeCaseNotEnoughQuantityInStock() {
         Map<Long, Integer> integerIntegerMap = Map.of(1L, 2);
@@ -145,5 +136,14 @@ class OrderServiceBaseTest {
             orderService.completeOrder(order, BigDecimal.valueOf(100));
         });
         Assertions.assertEquals(BadRequestException.class, thrown.getClass());
+    }
+
+    private static Order getOrder(int WHOLESALE_COUNT) {
+        DiscountCard discountCard = new DiscountCard(1L, 1, (short) 2);
+        Product product1 = new Product(1L, "1", BigDecimal.valueOf(1.1), 10, true);
+        Product product2 = new Product(1L, "1", BigDecimal.valueOf(1.2), 10, true);
+        OrderItem orderItem1 = new OrderItem(product1, WHOLESALE_COUNT);
+        OrderItem orderItem2 = new OrderItem(product2, WHOLESALE_COUNT);
+        return new Order(List.of(orderItem1, orderItem2), discountCard);
     }
 }

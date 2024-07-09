@@ -1,6 +1,8 @@
 package ru.clevertec.check.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,9 +14,15 @@ import ru.clevertec.check.exception.CheckRunnerException;
 import ru.clevertec.check.exception.DebitCardException;
 import ru.clevertec.check.exception.ObjectNotFoundException;
 import ru.clevertec.check.model.Order;
+import ru.clevertec.check.repository.DiscountCardRepositorySqL;
+import ru.clevertec.check.repository.ProductRepositorySqL;
+import ru.clevertec.check.repository.api.DiscountCardRepository;
+import ru.clevertec.check.repository.api.ProductRepository;
 import ru.clevertec.check.services.CheckServiceBase;
+import ru.clevertec.check.services.OrderItemServiceBase;
 import ru.clevertec.check.services.OrderServiceBase;
 import ru.clevertec.check.services.api.CheckService;
+import ru.clevertec.check.services.api.OrderItemService;
 import ru.clevertec.check.services.api.OrderService;
 import ru.clevertec.check.utils.BodyHttpReader;
 
@@ -25,9 +33,21 @@ import java.util.stream.Collectors;
 
 @WebServlet(urlPatterns = "/check")
 public class CheckController extends HttpServlet {
-    private final CheckService checkService = new CheckServiceBase();
-    private final OrderService orderService = new OrderServiceBase();
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private CheckService checkService;
+    private OrderService orderService;
+    private ObjectMapper objectMapper;
+
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        OrderItemService orderItemService = new OrderItemServiceBase();
+        ProductRepository productRepository = ProductRepositorySqL.getInstance();
+        DiscountCardRepository discountCardRepository = DiscountCardRepositorySqL.getInstance();
+        this.orderService = new OrderServiceBase(orderItemService, productRepository, discountCardRepository);
+        this.checkService = new CheckServiceBase(orderService, orderItemService);
+        this.objectMapper = new ObjectMapper();
+        super.init(config);
+    }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
