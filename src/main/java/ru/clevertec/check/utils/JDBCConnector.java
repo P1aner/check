@@ -6,9 +6,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import static ru.clevertec.check.config.AppProperties.datasourcePassword;
-import static ru.clevertec.check.config.AppProperties.datasourceUrl;
-import static ru.clevertec.check.config.AppProperties.datasourceUsername;
+import static ru.clevertec.check.config.DataSource.DATASOURCE_PASSWORD;
+import static ru.clevertec.check.config.DataSource.DATASOURCE_URL;
+import static ru.clevertec.check.config.DataSource.DATASOURCE_USERNAME;
 
 
 public class JDBCConnector {
@@ -28,20 +28,21 @@ public class JDBCConnector {
 
     public Connection getConnection() {
         try {
+            Class.forName("org.postgresql.Driver");
             if (connection == null || connection.isClosed()) {
                 connect();
             }
             return connection;
-        } catch (SQLException e) {
-            throw new CheckRunnerException("INTERNAL SERVER ERROR");
+        } catch (SQLException | ClassNotFoundException e) {
+            throw CheckRunnerException.internalServerError();
         }
     }
 
     private void connect() {
         try {
-            connection = DriverManager.getConnection(datasourceUrl, datasourceUsername, datasourcePassword);
+            connection = DriverManager.getConnection(DATASOURCE_URL, DATASOURCE_USERNAME, DATASOURCE_PASSWORD);
         } catch (SQLException e) {
-            throw new CheckRunnerException("INTERNAL SERVER ERROR");
+            throw CheckRunnerException.internalServerError();
         }
     }
 }

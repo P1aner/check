@@ -15,4 +15,6 @@ public interface OrderService {
     BigDecimal calculateOrderTotalWithDiscount(Order order);
 
     boolean isEnoughMoney(Order order, BigDecimal money);
+
+    void completeOrder(Order order, BigDecimal money);
 }
