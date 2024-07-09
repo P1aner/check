@@ -1,5 +1,7 @@
 package ru.clevertec.check.config;
 
+import ru.clevertec.check.exception.CheckRunnerException;
+
 import java.math.BigDecimal;
 import java.util.Arrays;
 

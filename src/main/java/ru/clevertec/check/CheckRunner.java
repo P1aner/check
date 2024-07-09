@@ -28,7 +28,6 @@ public class CheckRunner {
         ConsoleController consoleController = new ConsoleController(orderService, checkService);
         try {
             configApp(args);
-            ConsoleController consoleController = new ConsoleController();
             consoleController.create(args);
         } catch (CheckRunnerException e) {
             CsvUtil.filePrint(saveToFile, String.format("ERROR%n%s", e.getMessage()));
