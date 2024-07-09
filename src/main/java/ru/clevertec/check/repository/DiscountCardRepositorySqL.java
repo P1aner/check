@@ -21,7 +21,21 @@ public class DiscountCardRepositorySqL implements DiscountCardRepository {
     public static final String UPDATE_PUBLIC_DISCOUNT_CARD_SET_NUMBER_AMOUNT_WHERE_ID = "UPDATE discount_card SET number = ?, amount = ? WHERE id = ?";
     public static final String DELETE_FROM_DISCOUNT_CARD_WHERE_ID_VALUES = "DELETE FROM discount_card WHERE id = ?";
     public static final String SELECT_EXISTS_SELECT_FROM_DISCOUNT_CARD_WHERE_ID = "SELECT EXISTS (SELECT * FROM discount_card WHERE id = ?)";
-    private final JDBCConnector connector = JDBCConnector.getInstance();
+    private static DiscountCardRepositorySqL instance;
+    private final JDBCConnector connector;
+
+    private DiscountCardRepositorySqL(JDBCConnector connector) {
+        this.connector = connector;
+    }
+
+    public static DiscountCardRepositorySqL getInstance() {
+        if (instance == null) {
+            JDBCConnector connector = JDBCConnector.getInstance();
+            instance = new DiscountCardRepositorySqL(connector);
+        }
+        return instance;
+    }
+
 
     @Override
     public Long save(DiscountCard discountCard) {

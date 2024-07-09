@@ -34,8 +34,13 @@ public class CheckServiceBase implements CheckService {
     private static final DateTimeFormatter FORMATTER_DATE = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private static final DateTimeFormatter FORMATTER_TIME = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-    private final OrderService orderService = new OrderServiceBase();
-    private final OrderItemService orderItemService = new OrderItemServiceBase();
+    private final OrderService orderService;
+    private final OrderItemService orderItemService;
+
+    public CheckServiceBase(OrderService orderService, OrderItemService orderItemService) {
+        this.orderService = orderService;
+        this.orderItemService = orderItemService;
+    }
 
     @Override
     public String getCheck(Order order) {

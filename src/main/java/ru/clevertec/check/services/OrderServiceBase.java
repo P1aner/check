@@ -23,21 +23,15 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class OrderServiceBase implements OrderService {
+    private final OrderItemService orderItemService;
+    private final ProductRepository productRepository;
+    private final DiscountCardRepository discountCardRepository;
+
     public OrderServiceBase(OrderItemService orderItemService, ProductRepository productRepository, DiscountCardRepository discountCardRepository) {
         this.orderItemService = orderItemService;
         this.productRepository = productRepository;
         this.discountCardRepository = discountCardRepository;
     }
-
-    public OrderServiceBase() {
-        orderItemService = new OrderItemServiceBase();
-        discountCardRepository = new DiscountCardRepositorySqL();
-        productRepository = new ProductRepositorySqL();
-    }
-
-    private final OrderItemService orderItemService;
-    private final ProductRepository productRepository;
-    private final DiscountCardRepository discountCardRepository;
 
     @Override
     public Order createOrder(Map<Long, Integer> productsArgs, String discountCardId) {

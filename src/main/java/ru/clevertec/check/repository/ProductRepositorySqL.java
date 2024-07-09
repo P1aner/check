@@ -25,7 +25,20 @@ public class ProductRepositorySqL implements ProductRepository {
     public static final String DELETE_FROM_PRODUCT_WHERE_ID_VALUES = "DELETE FROM product WHERE id = ?";
     public static final String SELECT_FROM_PRODUCT_WHERE_ID_ANY = "SELECT * FROM product WHERE id = any (?)";
     public static final String SELECT_EXISTS_SELECT_FROM_PRODUCT_WHERE_ID = "SELECT EXISTS (SELECT * FROM product WHERE id = ?)";
-    private final JDBCConnector connector = JDBCConnector.getInstance();
+    private static ProductRepositorySqL instance;
+    private final JDBCConnector connector;
+
+    private ProductRepositorySqL(JDBCConnector connector) {
+        this.connector = connector;
+    }
+
+    public static ProductRepositorySqL getInstance() {
+        if (instance == null) {
+            JDBCConnector connector = JDBCConnector.getInstance();
+            instance = new ProductRepositorySqL(connector);
+        }
+        return instance;
+    }
 
     @Override
     public Long save(Product product) {
