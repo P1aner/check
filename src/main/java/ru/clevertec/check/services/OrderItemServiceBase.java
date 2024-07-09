@@ -14,6 +14,8 @@ import static ru.clevertec.check.config.AppProperties.WHOLESALE_COUNT;
 import static ru.clevertec.check.config.AppProperties.WHOLESALE_PERCENT;
 
 public class OrderItemServiceBase implements OrderItemService {
+    public OrderItemServiceBase() {
+    }
 
     @Override
     public BigDecimal calculateOrderItemTotalPrice(OrderItem orderItem) {
