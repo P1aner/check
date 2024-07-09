@@ -2,8 +2,6 @@ package ru.clevertec.check.controllers;
 
 import ru.clevertec.check.exception.CheckRunnerException;
 import ru.clevertec.check.model.Order;
-import ru.clevertec.check.services.CheckServiceBase;
-import ru.clevertec.check.services.OrderServiceBase;
 import ru.clevertec.check.services.api.CheckService;
 import ru.clevertec.check.services.api.OrderService;
 
@@ -23,8 +21,13 @@ public class ConsoleController {
     public static final String REGEX_PAIR = "=";
     public static final String REGEX_DASH = "-";
 
-    private final OrderService orderService = new OrderServiceBase();
-    private final CheckService checkService = new CheckServiceBase();
+    private final OrderService orderService;
+    private final CheckService checkService;
+
+    public ConsoleController(OrderService orderService, CheckService checkService) {
+        this.orderService = orderService;
+        this.checkService = checkService;
+    }
 
     public void create(String[] args) {
         List<String[]> list = Arrays.stream(args)
