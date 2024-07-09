@@ -4,8 +4,6 @@ import ru.clevertec.check.exception.CheckRunnerException;
 import ru.clevertec.check.model.DiscountCard;
 import ru.clevertec.check.model.Order;
 import ru.clevertec.check.model.OrderItem;
-import ru.clevertec.check.repository.DiscountCardRepositoryCsV;
-import ru.clevertec.check.repository.ProductRepositoryCsV;
 import ru.clevertec.check.repository.api.DiscountCardRepository;
 import ru.clevertec.check.repository.api.ProductRepository;
 import ru.clevertec.check.services.api.OrderItemService;
@@ -17,9 +15,15 @@ import java.util.List;
 import java.util.Map;
 
 public class OrderServiceBase implements OrderService {
-    private final OrderItemService orderItemService = new OrderItemServiceBase();
-    private final ProductRepository productRepository = ProductRepositoryCsV.getInstance();
-    private final DiscountCardRepository discountCardRepository = DiscountCardRepositoryCsV.getInstance();
+    private final OrderItemService orderItemService;
+    private final ProductRepository productRepository;
+    private final DiscountCardRepository discountCardRepository;
+
+    public OrderServiceBase(OrderItemService orderItemService, ProductRepository productRepository, DiscountCardRepository discountCardRepository) {
+        this.orderItemService = orderItemService;
+        this.productRepository = productRepository;
+        this.discountCardRepository = discountCardRepository;
+    }
 
     @Override
     public Order createOrder(Map<Long, Integer> productsArgs, String discountCardId) {

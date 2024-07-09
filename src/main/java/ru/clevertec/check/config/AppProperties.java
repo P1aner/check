@@ -1,16 +1,11 @@
 package ru.clevertec.check.config;
 
-import ru.clevertec.check.exception.CheckRunnerException;
-
 import java.math.BigDecimal;
 import java.util.Arrays;
 
 import static ru.clevertec.check.controllers.ConsoleController.REGEX_PAIR;
 
 public class AppProperties {
-    private AppProperties() {
-    }
-
     public static String pathToProductFile = "./src/main/resources/products.csv";
     public static String saveToFile = "./result.csv";
     public static final String PATH_TO_FILE = "pathToFile";
@@ -19,6 +14,9 @@ public class AppProperties {
     public static final String CSV_DELIMITER = ";";
     public static final BigDecimal WHOLESALE_PERCENT = BigDecimal.valueOf(10);
     public static final Short WHOLESALE_COUNT = 5;
+
+    private AppProperties() {
+    }
 
     public static void configApp(String[] args) {
         saveToFile = Arrays.stream(args).map(s -> s.split(REGEX_PAIR))
