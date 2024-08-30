@@ -61,15 +61,14 @@ class OrderServiceBaseTest {
         Order order = getOrder(WHOLESALE_COUNT);
         boolean enoughMoney = orderService.isEnoughMoney(order, BigDecimal.valueOf(10.36));
         System.out.println(orderService.calculateOrderTotalWithDiscount(order));
-        Assertions.assertEquals(true, enoughMoney);
+        Assertions.assertTrue(enoughMoney);
     }
 
     @Test
     void isEnoughMoneyFalse() {
         Order order = getOrder(WHOLESALE_COUNT);
-        CheckRunnerException thrown = Assertions.assertThrows(CheckRunnerException.class, () -> {
-            orderService.isEnoughMoney(order, BigDecimal.valueOf(10.34));
-        });
+        BigDecimal money = BigDecimal.valueOf(10.34);
+        CheckRunnerException thrown = Assertions.assertThrows(CheckRunnerException.class, () -> orderService.isEnoughMoney(order, money));
         Assertions.assertEquals("NOT ENOUGH MONEY", thrown.getMessage());
     }
 
@@ -80,9 +79,7 @@ class OrderServiceBaseTest {
         Set<Long> longs = integerIntegerMap.keySet();
         Mockito.when(productRepository.findByIds(longs)).thenReturn(List.of(product));
         Mockito.when(discountCardRepository.findByNumber(any.ordinal())).thenReturn(Optional.empty());
-        CheckRunnerException thrown = Assertions.assertThrows(BadRequestException.class, () -> {
-            orderService.createOrder(integerIntegerMap, "1111");
-        });
+        CheckRunnerException thrown = Assertions.assertThrows(BadRequestException.class, () -> orderService.createOrder(integerIntegerMap, "1111"));
         Assertions.assertEquals(BadRequestException.class.getCanonicalName(), thrown.getClass().getCanonicalName());
     }
 
@@ -92,9 +89,7 @@ class OrderServiceBaseTest {
         Product product = new Product(1L, "1", BigDecimal.valueOf(1.1), 1, true);
         Set<Long> longs = integerIntegerMap.keySet();
         Mockito.when(productRepository.findByIds(longs)).thenReturn(List.of(product));
-        CheckRunnerException thrown = Assertions.assertThrows(BadRequestException.class, () -> {
-            orderService.createOrder(integerIntegerMap, "1111");
-        });
+        CheckRunnerException thrown = Assertions.assertThrows(BadRequestException.class, () -> orderService.createOrder(integerIntegerMap, "1111"));
         Assertions.assertEquals(BadRequestException.class.getCanonicalName(), thrown.getClass().getCanonicalName());
     }
 
@@ -119,9 +114,8 @@ class OrderServiceBaseTest {
         DiscountCard discountCard = new DiscountCard(1111, (short) 3);
         Mockito.when(productRepository.findByIds(any())).thenReturn(List.of(product));
         Order order = new Order(List.of(new OrderItem(product, 10)), discountCard);
-        CheckRunnerException thrown = Assertions.assertThrows(CheckRunnerException.class, () -> {
-            orderService.completeOrder(order, BigDecimal.valueOf(10));
-        });
+        BigDecimal money = BigDecimal.valueOf(10);
+        CheckRunnerException thrown = Assertions.assertThrows(CheckRunnerException.class, () -> orderService.completeOrder(order, money));
         Assertions.assertEquals(CheckRunnerException.class, thrown.getClass());
     }
 
@@ -132,18 +126,17 @@ class OrderServiceBaseTest {
         DiscountCard discountCard = new DiscountCard(1111, (short) 3);
         Mockito.when(productRepository.findByIds(any())).thenReturn(List.of(product1));
         Order order = new Order(List.of(new OrderItem(product1, 10), new OrderItem(product2, 10)), discountCard);
-        CheckRunnerException thrown = Assertions.assertThrows(BadRequestException.class, () -> {
-            orderService.completeOrder(order, BigDecimal.valueOf(100));
-        });
+        BigDecimal money = BigDecimal.valueOf(100);
+        CheckRunnerException thrown = Assertions.assertThrows(BadRequestException.class, () -> orderService.completeOrder(order, money));
         Assertions.assertEquals(BadRequestException.class, thrown.getClass());
     }
 
-    private static Order getOrder(int WHOLESALE_COUNT) {
+    private static Order getOrder(int wholesaleCount) {
         DiscountCard discountCard = new DiscountCard(1L, 1, (short) 2);
         Product product1 = new Product(1L, "1", BigDecimal.valueOf(1.1), 10, true);
         Product product2 = new Product(1L, "1", BigDecimal.valueOf(1.2), 10, true);
-        OrderItem orderItem1 = new OrderItem(product1, WHOLESALE_COUNT);
-        OrderItem orderItem2 = new OrderItem(product2, WHOLESALE_COUNT);
+        OrderItem orderItem1 = new OrderItem(product1, wholesaleCount);
+        OrderItem orderItem2 = new OrderItem(product2, wholesaleCount);
         return new Order(List.of(orderItem1, orderItem2), discountCard);
     }
 }

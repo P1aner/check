@@ -26,7 +26,7 @@ class CheckServiceBaseTest {
         Order order = new Order(List.of(orderItem), discountCard);
         String check = checkService.getCheck(order);
         String actualCheckWithoutDate = "\n\nQTY;DESCRIPTION;PRICE;DISCOUNT;TOTAL\n3;1;1.1$;0.07$;3.30$\n\nDISCOUNT CARD;DISCOUNT PERCENTAGE\n1;2%\n\nTOTAL PRICE;TOTAL DISCOUNT;TOTAL WITH DISCOUNT\n3.30$;0.07$;3.23$";
-        String checkWithoutDate = check.substring(29, check.length());
+        String checkWithoutDate = check.substring(29);
         Assertions.assertEquals(checkWithoutDate, actualCheckWithoutDate);
     }
 
@@ -37,7 +37,7 @@ class CheckServiceBaseTest {
         Order order = new Order(List.of(orderItem), null);
         String check = checkService.getCheck(order);
         String actualCheckWithoutDate = "\n\nQTY;DESCRIPTION;PRICE;DISCOUNT;TOTAL\n3;1;1.1$;0.00$;3.30$\n\nTOTAL PRICE;TOTAL DISCOUNT;TOTAL WITH DISCOUNT\n3.30$;0.00$;3.30$";
-        String checkWithoutDate = check.substring(29, check.length());
+        String checkWithoutDate = check.substring(29);
         Assertions.assertEquals(checkWithoutDate, actualCheckWithoutDate);
     }
 }
