@@ -15,7 +15,9 @@ import static org.mockito.ArgumentMatchers.any;
 
 class ProductServiceBaseTest {
     private final ProductRepository productRepository = Mockito.mock(ProductRepository.class);
-    private final ProductService productServiceBase = new ProductServiceBase(productRepository, new ProductMapper());
+    private final ProductMapper productMapperMock = Mockito.mock(ProductMapper.class);
+    private final ProductService productServiceBase = new ProductServiceBase(productRepository, productMapperMock);
+
 
     @Test
     void getProductNegativeCase() {
@@ -26,7 +28,9 @@ class ProductServiceBaseTest {
     @Test
     void updateProductPositiveCase() {
         Mockito.when(productRepository.exists(1L)).thenReturn(true);
-        productServiceBase.updateProduct("1", new ProductDTO());
+        ProductDTO productDTO = ProductTestData.getProductDTO();
+        Mockito.when(productMapperMock.productDTOtoProduct(productDTO)).thenReturn(ProductTestData.getProduct());
+        productServiceBase.updateProduct("1", productDTO);
         Mockito.verify(productRepository, Mockito.times(1)).save(any());
     }
 
@@ -51,7 +55,7 @@ class ProductServiceBaseTest {
 
     @Test
     void createNewProduct() {
-        productServiceBase.createNewProduct(new ProductDTO("desc", 0.1, 12, false));
+        productServiceBase.createNewProduct(ProductTestData.getProductDTO());
         Mockito.verify(productRepository, Mockito.times(1)).save(any());
     }
 }
