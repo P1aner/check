@@ -5,43 +5,71 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import ru.clevertec.check.dto.ProductDTO;
 import ru.clevertec.check.dto.mapper.ProductMapper;
-import ru.clevertec.check.exception.CheckRunnerException;
 import ru.clevertec.check.exception.ObjectNotFoundException;
 import ru.clevertec.check.repository.api.ProductRepository;
 import ru.clevertec.check.services.api.ProductService;
+import ru.clevertec.check.services.data.ProductDTOTestData;
+import ru.clevertec.check.services.data.ProductTestData;
 
 import java.util.Optional;
 
-import static org.postgresql.hostchooser.HostRequirement.any;
+import static org.mockito.ArgumentMatchers.any;
 
 class ProductServiceBaseTest {
-    private final ProductRepository productRepository = Mockito.mock(ProductRepository.class);
-    private final ProductService productServiceBase = new ProductServiceBase(productRepository, new ProductMapper());
+    private static final String NUMBER = "1";
+
+    private final ProductRepository productRepositoryMock = Mockito.mock(ProductRepository.class);
+    private final ProductMapper productMapperMock = Mockito.mock(ProductMapper.class);
+    private final ProductService productServiceBase = new ProductServiceBase(productRepositoryMock, productMapperMock);
+
 
     @Test
     void getProductNegativeCase() {
-        Mockito.when(productRepository.findById(any.ordinal())).thenReturn(Optional.empty());
-        CheckRunnerException thrown = Assertions.assertThrows(ObjectNotFoundException.class, () -> {
-            productServiceBase.getProduct("1");
-        });
-        Assertions.assertEquals(ObjectNotFoundException.class, thrown.getClass());
+        Mockito.when(productRepositoryMock.findById(1L)).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(ObjectNotFoundException.class, () -> productServiceBase.getProduct(NUMBER));
+    }
+
+    @Test
+    void updateProductPositiveCase() {
+        ProductDTO productDTO = ProductDTOTestData.getProductDTOWithoutId();
+
+        Mockito.when(productRepositoryMock.exists(1L)).thenReturn(true);
+        Mockito.when(productMapperMock.productDTOtoProduct(productDTO)).thenReturn(ProductTestData.getProductWithoutId());
+
+        productServiceBase.updateProduct(NUMBER, productDTO);
+        Mockito.verify(productRepositoryMock, Mockito.times(1)).save(any());
     }
 
     @Test
     void updateProductNegativeCase() {
-        Mockito.when(productRepository.exists(any.ordinal())).thenReturn(false);
-        CheckRunnerException thrown = Assertions.assertThrows(ObjectNotFoundException.class, () -> {
-            productServiceBase.updateProduct("1", new ProductDTO());
-        });
-        Assertions.assertEquals(ObjectNotFoundException.class, thrown.getClass());
+        ProductDTO productDTO = ProductDTOTestData.getProductDTOWithoutId();
+
+        Mockito.when(productRepositoryMock.exists(1L)).thenReturn(false);
+
+        Assertions.assertThrows(ObjectNotFoundException.class, () -> productServiceBase.updateProduct(NUMBER, productDTO));
+    }
+
+    @Test
+    void deleteProductPositiveCase() {
+        Mockito.when(productRepositoryMock.exists(1L)).thenReturn(true);
+
+        productServiceBase.deleteProduct(NUMBER);
+
+        Mockito.verify(productRepositoryMock, Mockito.times(1)).deleteById(1L);
     }
 
     @Test
     void deleteProductNegativeCase() {
-        Mockito.when(productRepository.exists(any.ordinal())).thenReturn(false);
-        CheckRunnerException thrown = Assertions.assertThrows(ObjectNotFoundException.class, () -> {
-            productServiceBase.deleteProduct("1");
-        });
-        Assertions.assertEquals(ObjectNotFoundException.class, thrown.getClass());
+        Mockito.when(productRepositoryMock.exists(1L)).thenReturn(false);
+
+        Assertions.assertThrows(ObjectNotFoundException.class, () -> productServiceBase.deleteProduct(NUMBER));
+    }
+
+    @Test
+    void createNewProduct() {
+        productServiceBase.createNewProduct(ProductDTOTestData.getProductDTOWithoutId());
+
+        Mockito.verify(productRepositoryMock, Mockito.times(1)).save(any());
     }
 }
